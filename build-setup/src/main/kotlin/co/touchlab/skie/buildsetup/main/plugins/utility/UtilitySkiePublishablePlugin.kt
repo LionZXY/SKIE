@@ -27,6 +27,7 @@ abstract class UtilitySkiePublishablePlugin : Plugin<Project> {
         val extension = extensions.create<SkiePublishingExtension>("skiePublishing")
 
         configureSmokeTestTmpRepository()
+        configureCustomMavenRepository()
         configureMavenPublishing()
         configureSigningIfNeeded()
         configureMetadata(extension)
@@ -42,6 +43,28 @@ abstract class UtilitySkiePublishablePlugin : Plugin<Project> {
                     maven {
                         url = uri(it)
                         name = "smokeTestTmp"
+                    }
+                }
+            }
+        }
+    }
+
+    private fun Project.configureCustomMavenRepository() {
+        val customMavenRepositoryUrl: String? by this
+        val customMavenRepositoryName: String? by this
+        val customMavenRepositoryUsername: String? by this
+        val customMavenRepositoryPassword: String? by this
+
+        customMavenRepositoryUrl?.let { url ->
+            extensions.configure<PublishingExtension> {
+                repositories {
+                    maven {
+                        this.url = uri(url)
+                        name = customMavenRepositoryName ?: "customMaven"
+                        credentials {
+                            username = customMavenRepositoryUsername
+                            password = customMavenRepositoryPassword
+                        }
                     }
                 }
             }

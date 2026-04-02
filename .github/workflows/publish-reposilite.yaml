@@ -1,0 +1,50 @@
+name: Publish to Reposilite
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish'
+        required: true
+        default: '0.10.11-RC2'
+
+jobs:
+  publish:
+    runs-on: macos-14
+    permissions:
+      contents: read
+    env:
+      RELEASE_VERSION: ${{ github.event.inputs.version }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Create acceptance-tests stubs
+        run: |
+          mkdir -p SKIE/acceptance-tests/framework
+          mkdir -p SKIE/acceptance-tests/functional
+          mkdir -p SKIE/acceptance-tests/libraries
+          mkdir -p SKIE/acceptance-tests/type-mapping/test-dependencies/regular
+          mkdir -p SKIE/acceptance-tests/type-mapping/test-dependencies/exported
+          touch SKIE/acceptance-tests/acceptance-tests.gradle.kts
+          touch SKIE/acceptance-tests/framework/acceptance-tests-framework.gradle.kts
+          touch SKIE/acceptance-tests/functional/functional.gradle.kts
+          touch SKIE/acceptance-tests/libraries/libraries.gradle.kts
+          touch SKIE/acceptance-tests/type-mapping/type-mapping.gradle.kts
+          touch SKIE/acceptance-tests/type-mapping/test-dependencies/test-dependencies.gradle.kts
+          touch SKIE/acceptance-tests/type-mapping/test-dependencies/regular/regular-dependency.gradle.kts
+          touch SKIE/acceptance-tests/type-mapping/test-dependencies/exported/exported-dependency.gradle.kts
+
+      - name: Prepare Worker
+        uses: ./.github/actions/prepare-worker
+
+      - name: Publish to Reposilite
+        uses: gradle/gradle-build-action@v2.4.2
+        with:
+          arguments: 'publishAllPublicationsToReposiliteRepository'
+          build-root-directory: SKIE
+        env:
+          ORG_GRADLE_PROJECT_customMavenRepositoryUrl: https://reposilite.flipp.dev/snapshots
+          ORG_GRADLE_PROJECT_customMavenRepositoryName: reposilite
+          ORG_GRADLE_PROJECT_customMavenRepositoryUsername: ${{ secrets.REPOSILITE_NAME }}
+          ORG_GRADLE_PROJECT_customMavenRepositoryPassword: ${{ secrets.REPOSILITE_PASSWORD }}
