@@ -16,6 +16,9 @@ object SkieConfigurationKeys {
 
     val SkieDirectories: CompilerConfigurationKey<SkieDirectoriesValue> =
         CompilerConfigurationKey<SkieDirectoriesValue>("SKIE directories")
+
+    val ExternalDependencies: CompilerConfigurationKey<List<String>> =
+        CompilerConfigurationKey<List<String>>("SKIE external dependencies")
 }
 
 var CompilerConfiguration.initPhaseContext: InitPhaseContext

@@ -13,6 +13,7 @@ class SkieCommandLineProcessor : CommandLineProcessor {
 
     private val options = listOf(
         Options.skieDirectories,
+        Options.externalDependency,
     )
 
     private val optionsMap = options.associateBy { it.optionName }
@@ -25,6 +26,10 @@ class SkieCommandLineProcessor : CommandLineProcessor {
         when (optionsMap[option.optionName]) {
             Options.skieDirectories -> {
                 configuration.put(SkieConfigurationKeys.SkieDirectories, Options.skieDirectories.deserialize(value))
+            }
+            Options.externalDependency -> {
+                val existing = configuration.get(SkieConfigurationKeys.ExternalDependencies).orEmpty()
+                configuration.put(SkieConfigurationKeys.ExternalDependencies, existing + Options.externalDependency.deserialize(value))
             }
         }
     }

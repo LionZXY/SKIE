@@ -9,6 +9,7 @@ import co.touchlab.skie.plugin.coroutines.configureMinOsVersionIfNeeded
 import co.touchlab.skie.plugin.coroutines.configureSkieRuntimeDependencySubstitution
 import co.touchlab.skie.plugin.defaultarguments.disableCachingIfNeeded
 import co.touchlab.skie.plugin.dependencies.SkieCompilerPluginDependencyProvider
+import co.touchlab.skie.plugin.dependencies.passExternalDependenciesToCompiler
 import co.touchlab.skie.plugin.directory.SkieDirectoriesManager
 import co.touchlab.skie.plugin.fatframework.FatFrameworkConfigurator
 import co.touchlab.skie.plugin.relativepaths.configureDebugPrefixMap
@@ -74,6 +75,8 @@ object SkieGradlePluginApplier {
         disableCachingIfNeeded()
 
         addDependencyOnSkieRuntime()
+
+        passExternalDependenciesToCompiler()
 
         SwiftUnpackingConfigurator.configureCustomSwiftUnpacking(this)
 
